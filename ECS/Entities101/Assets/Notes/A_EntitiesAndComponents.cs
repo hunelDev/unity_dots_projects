@@ -55,16 +55,6 @@ partial struct DenemeSystem : ISystem
         Health health = state.EntityManager.GetComponentData<Health>(newEntity); //notta GetComponent olani var ama yeni versionda yok sanirim
         state.EntityManager.SetComponentData(newEntity, new Health { HitPoints = health.HitPoints - 5 }); //entity componentinin valularini overwrite ediyor.
 
-        entities = state.GetEntityQuery(ComponentType.ReadOnly<Health>()).ToEntityArray(Allocator.Persistent);
-        Entity selectedEntity = default;
-        for (int i = 0; i < entities.Length; i++)
-        {
-            Health healt =  state.EntityManager.GetComponentData<Health>(entities[i]);
-            if(healt.ArmourRating > 300) selectedEntity = entities[i];
-            break;
-        }
-        
-        Debug.Log(selectedEntity.ToFixedString());
     }
 
     void OnDestroy(ref SystemState state)
