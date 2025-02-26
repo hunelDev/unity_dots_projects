@@ -54,7 +54,6 @@ partial struct DenemeSystem : ISystem
         state.EntityManager.HasComponent<Health>(newEntity); //geriye bool donduyuro ve componenet o entityde varmi
         Health health = state.EntityManager.GetComponentData<Health>(newEntity); //notta GetComponent olani var ama yeni versionda yok sanirim
         state.EntityManager.SetComponentData(newEntity, new Health { HitPoints = health.HitPoints - 5 }); //entity componentinin valularini overwrite ediyor.
-
     }
 
     void OnDestroy(ref SystemState state)
@@ -77,3 +76,64 @@ partial struct DenemeSystem : ISystem
 
 
 //Chunks
+//Archetype enityleri 16KB lik belleklerde saklanirlar bu belleklere chunk yani parca deniyor.Maximum 128 enitity tutabliyor icinde.Eger 16kb/128 durumunu asan bir entity olursa 128den daha az entity tutucak.
+//Chunklarin arraylerinde entitylerinin idleri ve her type componenet tutuluyor.Ornek olarak A ve B type componenete sahip archetypelardaki chunklar bir 3 ayri array tutucak bir array entity ID leri,
+//2. array A componentleri ve 3. array B componentleri icin tutucak
+//ilk entitynin id ve componentleri chunkda 0 indexi ile tutulcak.2. entity 1. indexde ve boyle devem ediyor.
+//chunkda arrayler siki paketler halinde tutuluyor.Yeni bir entity eklendiginde ilk free array indexinde depolaniyor.Eger bir entity chunkdan kaldirilirsa bu islem oluyor cunku entity yok destroy edileblir ya da archetype degisebliyor.
+//Bu durumda son entity boslugu doldurmak icin oraya tasiniyor.
+//chunk olsturmak ya da destroy etmek EnitityManager tarafindan handle ediliyor.
+//EntityManager eger bir chunk fullse ve ona yeni bir entity o archetypa eklenmek isteniyorsa olusutuyor.
+//EntityManager eger son entity chunkdan kaldirilmisa destory ediyor.
+//EntityManager in yaptigi add,remove ve move operasyonlarina structural change deniyor.Bu tur degisikler sadece main thread de yapilabliyor yani joblarda yapilamiyor ileride EntityCommandBuffer konusunu konusucakmisiz bu bu sorunu cozuyormus.
+
+
+//Queries
+//Bir EntityQuery effective bir sekilde belli component kumlerini icinde barindiran butun entityleri buluyor.Mesela type A ve type B iceren butun entityler icin bakiyor, sonra Query archetypelarin chunklarini bir araye getiriyor.
+//Bu chunklarda da diger component typelarin ne oldugnun bir onemi yok getiriyor mesela C type componentte olablir bu archetypelarda.Boylece query A ve B ye sahip entitylerle eslesiyor ama ayni zamanda mesela C ye sahip olanlada eslesiyor.
+//Not; query de eslesen archetypelar, yeni bir archetype world e eklenene kadar cheche ediliyor.Boylece chaching ile queryler cok daha ucuzdur.
+//Ayrica query mesela component A ve B olan ama C olmayan eslesmer icin arama da yapablir yani mesela icinde C olan archetypelari exclude ediyor.
+
+
+
+//Enity ID
+//Bir entity ID entity struct tarafindan temsil edilen 2 int den meydana gelir bunlar index ve version.
+//ID ile entitylere bakmak icin EntityManager metadata arrayde tutuyor gerekli datalari.Entity nin indexi metadata array slotununu belirtiyor ve slot enitity nin tutuldugu chunk a bir pointer tutuyor.Ayrica chunkda entityinin indexi var
+//Eger index de bir entity yoksa, indexdeki chunk pointer nulldur.
+//ornek olarak eniny metadata array = [chunk*,index in chunk,version number],[chunk*,index in chunk,version number],[chunk*,index in chunk,version number] boyle boyle gidiyor
+//her world kendi entitylerini buyuk single bir arrayden izler.Entity ID index = metadata arrayi slotundaki indexi, Entity ID Version = o index slotundaki entity nin her destroyed edildiginde arttirilmis degeridir.
+
+//entity version numarasi entitynin destroyed edildikten sonra entitiy indexinin tekrar kullanilmasina izin veriyor.Bir entity destory edildiginde version numarasi o indexde arttirilir.Eger id nin version numarasi,arrayde tutulan ile
+//eslesmiyorsa kimlik daha once yok edilmis ya da hic var olmamis olablirmis.
+
+
+
+//Tag components
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
