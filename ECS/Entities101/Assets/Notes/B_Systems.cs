@@ -19,7 +19,7 @@
 //Default olarak system grouplari onlarin childlarinin OnUpdate methodunu siralanmis bir sekilde cagriyior childa gore.System grouplari bir hierachy ile update orderi belirlerler.
 //Bir system group class olarak tanimlanirlar ve ComponentSystemGroupdan inherit edilirler.
 //System group update edildiginde default olarak chidlar siralandiklari sekilde update edilirler ancak bu defailt ozelligi update gorubun update methodunu override ederek davranisi degistirilebliyor.
-//ornek olarak FixedStepSimulationGroup custom update methdoda sahiptir bu method frame basi sifir veya daha fazla kere childlarini sabit bir update araligini belirlemek icin guncelliyor.Yani framde hic guncellenmeye bilir yada 2 kere guncelleneblir.
+//ornek olarak FixedStepSimulationSystemGroup custom update methdoda sahiptir bu method frame basi sifir veya daha fazla kere childlarini sabit bir update araligini belirlemek icin guncelliyor.Yani framde hic guncellenmeye bilir yada 2 kere guncelleneblir.
 //Bir system groupun childlari yeni child eklendiginde tekrar sort ediliyor.
 //Childlar stystem grouba UpdateInGroup attribute si ile eklenir.Systemler ve system grouplari bu attribute olmadan default olarak SimulationSystemGroup a ekleniyor.
 //UpdateBefore ve UpdateAfter attributeleri gorubun icinde childlar arasinda sira duzenin belirlemek icin kullanilir.Yani o SystemGroubunun iniceki childlar icin.
