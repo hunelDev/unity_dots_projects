@@ -1,3 +1,9 @@
+using UnityEngine;
+using Unity.Burst;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
+
 // Entities and components
 // Entity gameobjectin lightweight unmanaged alternatifi olarak cikmistir.Benzerler ama farkli ozellikleri var;
 // Entitty gameobject gibi managed object degildir ancak unique identifier numarasi vardir.
@@ -7,13 +13,6 @@
 // Entity yerlesik bir parenting kavramina sahip degildir.Bunun yerine  Parent  componeneti varmis ve bu componenette baska bir entity nin referansini iceriyormus ve bu yapi transform hierarcysine izin veriyormus enitity icin.
 
 // Basit bir entity componeneti struct ile tanimlaniyor ve IComponentData implement ediyor.
-
-using UnityEngine;
-using Unity.Burst;
-using Unity.Collections;
-using Unity.Entities;
-using Unity.Mathematics;
-
 public struct Health : IComponentData
 {
     public int HitPoints;
@@ -158,4 +157,4 @@ partial struct OtherSystem : ISystem
     }
 }
 
-
+//Yapisal degislik yapmak DyanmicBufferi geecesiz kiliyor ve kullanamya calisirsak dynamicbufferi hata firlatiyor.Eger bu dynamic bufferda structural change yapmissak onu tekrar almamiz gerekiyor.GetBuffer ile yani.

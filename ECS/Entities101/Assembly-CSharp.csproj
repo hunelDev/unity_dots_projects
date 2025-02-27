@@ -58,7 +58,12 @@
     <Analyzer Include="C:\Users\ceyhu\Desktop\Unity Projects\DOTS\ECS\Entities101\Library\PackageCache\com.unity.entities@1eebe0437e56\Unity.Entities\SourceGenerators\Unity.Entities.Analyzer.CodeFixes.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\MyExamples\MonsterAuthoring.cs" />
+    <Compile Include="Assets\MyExamples\Monster.cs" />
+    <Compile Include="Assets\MyExamples\DenemeSystem.cs" />
+    <Compile Include="Assets\MyExamples\DenemeData.cs" />
     <Compile Include="Assets\Notes\A_EntitiesAndComponents.cs" />
+    <Compile Include="Assets\Notes\B_Systems.cs" />
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files\Unity\Hub\Editor\6000.0.36f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>
