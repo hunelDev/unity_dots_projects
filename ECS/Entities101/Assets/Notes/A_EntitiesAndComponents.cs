@@ -12,6 +12,7 @@ using UnityEngine;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 
 public struct Health : IComponentData
 {
@@ -95,7 +96,6 @@ partial struct DenemeSystem : ISystem
 //Ayrica query mesela component A ve B olan ama C olmayan eslesmer icin arama da yapablir yani mesela icinde C olan archetypelari exclude ediyor.
 
 
-
 //Enity ID
 //Bir entity ID entity struct tarafindan temsil edilen 2 int den meydana gelir bunlar index ve version.
 //ID ile entitylere bakmak icin EntityManager metadata arrayde tutuyor gerekli datalari.Entity nin indexi metadata array slotununu belirtiyor ve slot enitity nin tutuldugu chunk a bir pointer tutuyor.Ayrica chunkda entityinin indexi var
@@ -107,33 +107,55 @@ partial struct DenemeSystem : ISystem
 //eslesmiyorsa kimlik daha once yok edilmis ya da hic var olmamis olablirmis.
 
 
-
 //Tag components
+//IComponentData struct yapisinda field olmamasi durumna tag componenet deniyor.Data depolamamlarina ragment entilere genede eklenip cikarilabliyorlar diger typelar gibi.Bu islem queryying islemlerinde yararli oluyor.
+//Ornek olarak entitler mesela monsterlari temsil ediliyorsa Monster componenet query ile bu entityleri match etmesini sagliyor;
+public struct Monster : IComponentData
+{
+
+}
 
 
+//DynamicBuffer components
+//DynamicBuffer resizeable array olan bir componenet typedir.Yaratmak icin DynamicBufferi IBufferElementData arayuzunden turetiyoruz.
+public struct Waypoint : IBufferElementData
+{
+    public float3 Value;
+}
 
+//Her entity bufferi Lenghth,Capacity ve pointer tutuyor.
+//Length tutlan element tayisini gosteriyor bufferda 0 dan baslar buffera bir deger append ettigimizde artiyor.
+//Capacity buffer doplama miktaridir.Belli bir kapasityle basliyormus.Default olarak 128/sizeof(T) mis.IBufferElementData daki InternalBufferCapacity attribute ile ayarlanabliyor.
+//Pointer bufferin iceriklerinin bulundugu yeri gosteriyor.Baslangicta degeri nulldur.Buda iceriklerin direkt olarak chunk da depolandigini gosteriyormus.Eger default kapasitesini asan bir capacity degeri tanimlanirsa;
+//yeni large array chunkun disinda allocate ettiriliyor.Bufferin icerikleri bu arraye kopyalaniyor.Ve pointer bu arrayi gosterecek sekilde set ediliyor.Eger bufferin kapasitesi bu arrayide asarsa bu arrayden yenisine kopyalaniyor eskisi
+//dispose ediliyor.Buffer eger kuculurse yani shrunk olursa default chankya kopyalaniyor.
+//Eger internal ya da belirlenmisse external kapasitesi deallocate edilir eger EnitityManager chunkun kendini destroy etmisse.
 
+//Not;Eger dynamic buffer chunkun disinda depolanmissa internal capacity etkili bir sekilde kullanilir.Buffer iceriklerine erisilirken extra bir pointer gerektirir.Bu costlar ihmal edileblir eger internal kapasitesi hic asilmyacaksa.
+//Bir diger olasilikta InternalBufferCapacity i 0 yapamaktir boylece bos olmayan bufferlar her zaman chunk disinda tutulacak.Bu her zaman ekstra bir buffer gerektrecegi anlamina geliyor.
+//ama bu sekilde kullanarak chunklarin kullanilmayan alanlarinin olmasini engellemis oluyoruz.
 
+//EntityManager dynamic bufferlar icin key methodlar iceriyor;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+partial struct OtherSystem : ISystem
+{
+    void OnCreate(ref SystemState state)
+    {
+        var entities = state.EntityManager.GetAllEntities(Allocator.Temp);
+        state.EntityManager.AddComponent<Waypoint>(entities[0]); //T burada dynamic buffer component olabliyor.
+        DynamicBuffer<Waypoint> buffers = state.EntityManager.AddBuffer<Waypoint>(entities[1]); // type T olan bir Dynamic buffer component ekliyor ve geriye DynamicBuffer<T> donuyor
+        state.EntityManager.RemoveComponent<Waypoint>(entities[0]);//dynamic componenti kaldiriyor.
+        state.EntityManager.HasBuffer<Waypoint>(entities[1]); // T typeli dynamic buffer component iceriyor mu?
+        state.EntityManager.GetBuffer<Waypoint>(entities[1]); // T DynamicBuffer<T> dir.Entity dynamic buffer component geriye donduruyor
+        
+        //DynamicBuffer<T> bir entityinin T dynamic buffer component ni temsil ediyor.DynamicBuffer<T> key propertyler ve methodlar iceriyor;
+        buffers.Length = 130; //buffer lengthi get veya set ediyor
+        buffers.Capacity = 0; //buffer capacity sini gene get veya set ediyor
+        buffers[1] = new Waypoint(); //belli indexde bufferin degerini get set yapiyoruz
+        buffers.Add(new Waypoint()); //bufferin sonuna element ekiyor ve eger gerekliyse resize ediyor bufferi
+        buffers.RemoveAt(2); //bufferin belli indexki elemetini remove ediyor bunun yainda
+        //RemoveRange ve AddRange var yukardaki 2liden tek farki NativeArray olarak aliyor.
+    }
+}
 
 
