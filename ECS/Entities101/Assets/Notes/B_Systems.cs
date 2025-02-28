@@ -12,6 +12,7 @@
 //System ISysteme ek olarak ISystemStartStop interfacesinden implement edilebliyor.Bu interfacenin methodlari;
 //OnStartRunning();OnUpdate methodunun cagirlmadan once cagriliyor gene ve ayrica system re-enabled edildiginde yani Enable property false dan true yapildiginda cagriliyor.
 //OnStopRunning(); OnDestroy methodu cagirlmadan once calisiryor ya da Enable property true den false a set edilince cagriliyor.
+//Bu arada Enable property ISystemin propertysi degildri ComponenetSystemGroupun propertysidir.ISystemler onlarin childlari oluyor sonraki baslikta zaten aciliyoruz.Yani group enable true false ediliyor.
 
 
 //System Groups and System Update Order
@@ -30,7 +31,6 @@
 //ComponentSystemGroup OnUpdate override edilmedigi icin default olarak childrenlar eklendikleri sirayla update edilecekler
 public partial class MonsterSystemGroup : ComponentSystemGroup
 {
-    
 }
 
 //MonsterSystemGroup un child systemidir.
@@ -44,11 +44,40 @@ public partial struct BroSystem : ISystem, ISystemStartStop
     }
     public void OnStopRunning(ref SystemState state)
     {
-        
+     
     }
+    
 }
 
 
 //Creating worlds and systems
+//Play modda otomatic boostrapping process default olarak 3 system groupla bir world yaratir;
+//InitializationSystemGroup;Unityp player loopun initializetion asamasinin bitmesiyle update edilir.
+//SimulationSystemGroup;Unity player loopunun Update asmasinin bitmesyiel Update edilir.
+//PresentationSystemGroup;Unity player loopunun PreLateUpdate asamasinin bitmesiyle update edilir.Genellikle rendering kod yerlstriliyormus.
+//Automatic bootstrapping her system instancesini ve system group u yaratir.Eger DisableAutoCreation attribute eklenmemisse.Bu system instanceleri default olarak SimulationSystemGroup a ekleniyor eger UpdateInGroup attrubte ile overriden edilmemisse.
+//Ornek olarak eger system [UpdateInGroup(typeof(InitializationSystemGroup))] eknemisse SimuatiuonSystemGroup yerine InitializationSystemGroupa eklenecek.
+
+//Autmatic boostrapping asamasi scripting definationla disable edilebliyor;
+//UNITY_DISABLE_AUTOMATIC_SYSTEM_BOOSTRAP_RUNTIME_WORLD;deault worldun disable edilmesini sagliyor otomatik boostrapping ismenini.
+//UNITY_DISABLE_AUTOMATIC_SYSTEM_BOOSTRAP_EDITOR_WORLD ; editor world de otomatik boostrappingi disable ediyor.
+//UNITY_DISABLE_AUTOMATIC_SYSTEM_BOOSTRAP; hem runtime hem de editor wordlu disable ediyor
+
+//Disable edilmisse boostrapping artik bizim kodlarimiz sunlari yaratmakla sorumlu oluyor;
+//Creating worlds , Calling World.GetOrCreateSystem<T>() ile system ve system group insancelerini dunyaya eklmek icin, Registration top level systemler (SimulationSystemGroup mesela) ile unity player loopu update etmek icin.
+//Alternatif olarak disable etmek yerine customize edebliriz boostrapping logici.Bunun icin ICustomBoostrap implementationlu class yaratarak yapiyoruz bunu
+
+
+//Time in worlds and systems
+//World bir Time Propertye sahiptir bu property TimeData struct return eder;Bu TimeData struct frame delta time ve elapsed time i iceriyor.Time degeri worldun UpdateWorldTimeSystem ile update ediliyor.
+//Time valuesi bagzi World methodlari ile degistirilebliyor;
+//SetTime; time valuyu set ediyor
+//PushTime; gercici olarak time valuesini degisitiriyor
+//PopTime; son push time valusini restore ediyor.
+//FixedStepSimulationSystemGroup children larinin updatesinden once time value push eder ve updatesinden sonra pop ediyor degeri boylece aslinda yanlis zamani childrlarina gondermis oluyor.
+
+
+//SystemState
+
 
    
