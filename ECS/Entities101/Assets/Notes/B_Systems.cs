@@ -40,7 +40,7 @@ public partial struct BroSystem : ISystem, ISystemStartStop
 
     public void OnStartRunning(ref SystemState state)
     {
-        
+       
     }
     public void OnStopRunning(ref SystemState state)
     {
@@ -78,6 +78,19 @@ public partial struct BroSystem : ISystem, ISystemStartStop
 
 
 //SystemState
+//systemin OnUpdate(),onCreate() ve onDestroy() methodlari SystemState parametersi pass ediyor.SystemState system instacnesinin statesini temsil eder ve onemli property ve methodlar iceriyor.
+//Word;systemin wordudur.
+//EntityManager;system wordunun entity manageridir
+//Dependency; bir JobHandledir job dependencyleri systemler arasinda pass etmek icin kullaniyor.Bu propertyde mesela systemin okudu bilesenlerde bir job varsa bu propertyden alabliyoruz handlesini
+//GetEntityQuery;EntityQuery donduruyor.
+//GetComponentTypeHandle<T>:ComponentTypeHandle return ediyor.
+//GetComponentLookup<T>; ComponentLookup return edyiro.
+//EntityQuery,ComponentTypeHnadle ve CompentLookup EntityManagerdan edilnileblisede stateden okumak daha dogrudur diyor.Nedenide diyorki SystemState kullanildiginda component system tracked ile izlenebliyor.
+//Buda dogru bir sekilde Dependecny propertynin job dependecyleri pass etmesini sagliyormus.
 
 
-   
+//SystemAPI
+//SystemAPI bir cok yararli static methodlarsa sahiptir.Bu methodlar Word,EntityManager ve SystemStateyi kapsar.
+//SystemAPI soruce generatorlare dayanir yani sadece IJobEntity(IJobChunk degil ama) ve system de calisir.Avantaji 2 context de birlkte calisablirmesiymis ve compy-pass de kolaylik sagliyormus.
+//Not;Genel kural olarak eger Entity hakkinda bir islem yapacaksak ve kararsizsak once SystemAPI ya bakicaz sonra SystemState bakicaz eger yoksa son olarak EntityManager ve Word a bakicaz.
+//SystemAPI Query() methodu sagliyor bu method entityler ve componentler uzerinde foreach loop ile query match ediyor.
