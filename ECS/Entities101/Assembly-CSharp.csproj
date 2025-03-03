@@ -61,6 +61,7 @@
     <Compile Include="Assets\Notes\A_EntitiesAndComponents.cs" />
     <Compile Include="Assets\Notes\B_Systems.cs" />
     <Compile Include="Assets\Notes\C_Accessing_Entities_in_Job.cs" />
+    <Compile Include="Assets\Notes\D_EntityCommand_Buffers.cs" />
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files\Unity\Hub\Editor\6000.0.36f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>
